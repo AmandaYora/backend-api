@@ -1,26 +1,13 @@
-version: '3'
+version: '3.8'
 services:
   app:
     build: .
     ports:
       - "3000:3000"
-    depends_on:
-      - db
+      - "3306:3306"
     environment:
-      - DB_HOST=db
+      - PORT=3000
+      - DB_HOST=127.0.0.1
       - DB_USER=root
       - DB_PASSWORD=
       - DB_NAME=jokipremium_ai_db
-      - PORT=3000
-
-  db:
-    image: mysql:5.7
-    restart: always
-    environment:
-      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
-      MYSQL_ROOT_PASSWORD: ""
-      MYSQL_DATABASE: jokipremium_ai_db
-      MYSQL_USER: root
-      MYSQL_PASSWORD: ""
-    ports:
-      - "3306:3306"
