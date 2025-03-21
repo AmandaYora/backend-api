@@ -17,6 +17,7 @@ services:
     image: mysql:5.7
     restart: always
     environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: "yes"
       MYSQL_ROOT_PASSWORD: ""
       MYSQL_DATABASE: jokipremium_ai_db
       MYSQL_USER: root
