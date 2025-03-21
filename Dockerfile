@@ -1,6 +1,7 @@
 FROM node:20.10.0
 RUN apt-get update && \
     apt-get install -y mariadb-server supervisor && \
+    mkdir -p /run/mysqld && chown -R mysql:mysql /run/mysqld && \
     rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 COPY package.json yarn.lock ./
