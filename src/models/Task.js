@@ -12,9 +12,9 @@ const Task = sequelize.define('Task', {
     allowNull: false,
   },
   no_customers: {
-    type: DataTypes.INTEGER,
+    type: DataTypes.STRING,
     allowNull: false,
-  },
+  },  
   language: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -49,11 +49,10 @@ const Task = sequelize.define('Task', {
   }
 }, {
   tableName: 'tasks',
-  timestamps: true,       // otomatis menambahkan created_at dan updated_at
-  underscored: true,       // mengubah createdAt menjadi created_at, dst.
+  timestamps: true,     
+  underscored: true,      
 });
 
-// Fungsi untuk mendapatkan label profesional status
 Task.getStatusLabel = function(status) {
   const labels = {
     pending: 'Pending',
