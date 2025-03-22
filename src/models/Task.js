@@ -45,16 +45,9 @@ const Task = sequelize.define('Task', {
     allowNull: false,
   },
   status: {
-    type: DataTypes.ENUM(
-      'Pending',
-      'Down Payment Received',
-      'In Progress',
-      'Development Completed',
-      'Full Payment Completed',
-      'Delivered'
-    ),
+    type: DataTypes.ENUM(...Object.keys(statusLabels)),
     allowNull: false,
-    defaultValue: 'Pending',
+    defaultValue: 'pending',
   }
 }, {
   tableName: 'tasks',
@@ -63,7 +56,7 @@ const Task = sequelize.define('Task', {
 });
 
 Task.getStatusLabel = function(status) {
-  return status;
+  return statusLabels[status] || status;
 };
 
 module.exports = Task;
