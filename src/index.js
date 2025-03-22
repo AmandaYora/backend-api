@@ -53,10 +53,10 @@ const migrateStatusValues = async () => {
 };
 
 ensureDatabaseExists()
-  .then(() => migrateStatusValues()) // migrasi sebelum sync
-  .then(() => db.sync({ alter: true }))
+  .then(() => db.sync({ alter: true })) // sync dulu untuk update struktur kolom
+  .then(() => migrateStatusValues())    // baru jalankan migrasi data
   .then(() => {
-    console.log('Database tersinkronisasi dengan sukses.');
+    console.log('Database tersinkronisasi dan migrasi selesai.');
     app.listen(port, () => {
       console.log(`Server berjalan di http://localhost:${port}`);
     });
