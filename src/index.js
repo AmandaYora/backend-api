@@ -2,10 +2,13 @@
 require('dotenv').config();
 const express = require('express');
 const mysql = require('mysql2/promise');
-const app = express();
-const port = process.env.PORT || 3000;
 const db = require('./config/database');
 const taskRoutes = require('./routes/task.routes');
+const app = express();
+const port = process.env.PORT || 3000;
+
+app.use(express.json());
+app.use('/tasks', taskRoutes);
 
 const ensureDatabaseExists = async () => {
   const maxRetries = 10;
@@ -21,16 +24,36 @@ const ensureDatabaseExists = async () => {
       return;
     } catch (err) {
       console.log(`Gagal konek DB (percobaan ${i + 1}/${maxRetries}), coba lagi...`);
-      await new Promise(res => setTimeout(res, 2000)); // tunggu 2 detik
+      await new Promise(res => setTimeout(res, 2000));
     }
   }
   throw new Error('Gagal konek DB setelah beberapa percobaan.');
 };
 
-app.use(express.json());
-app.use('/tasks', taskRoutes);
+const migrateStatusValues = async () => {
+  const statusMap = {
+    'pending': 'Pending',
+    'done down payment': 'Down Payment Received',
+    'progress': 'In Progress',
+    'done development': 'Development Completed',
+    'done full payment': 'Full Payment Completed',
+    'delivery': 'Delivered'
+  };
+
+  for (const [oldStatus, newStatus] of Object.entries(statusMap)) {
+    await db.query(
+      `UPDATE tasks SET status = :newStatus WHERE status = :oldStatus`,
+      {
+        replacements: { newStatus, oldStatus }
+      }
+    );
+  }
+
+  console.log('✔ Migrasi status selesai');
+};
 
 ensureDatabaseExists()
+  .then(() => migrateStatusValues()) // migrasi sebelum sync
   .then(() => db.sync({ alter: true }))
   .then(() => {
     console.log('Database tersinkronisasi dengan sukses.');
