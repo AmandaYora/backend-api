@@ -1,6 +1,15 @@
 const { DataTypes } = require('sequelize');
 const sequelize = require('../config/database');
 
+const statusLabels = {
+  pending: 'Pending',
+  'done down payment': 'Down Payment Received',
+  progress: 'In Progress',
+  'done development': 'Development Completed',
+  'done full payment': 'Full Payment Completed',
+  delivery: 'Delivered'
+};
+
 const Task = sequelize.define('Task', {
   task_id: {
     type: DataTypes.INTEGER,
@@ -14,7 +23,7 @@ const Task = sequelize.define('Task', {
   no_customers: {
     type: DataTypes.STRING,
     allowNull: false,
-  },  
+  },
   language: {
     type: DataTypes.STRING,
     allowNull: false,
@@ -36,33 +45,18 @@ const Task = sequelize.define('Task', {
     allowNull: false,
   },
   status: {
-    type: DataTypes.ENUM(
-      'pending',
-      'done down payment',
-      'progress',
-      'done development',
-      'done full payment',
-      'delivery'
-    ),
+    type: DataTypes.ENUM(...Object.keys(statusLabels)),
     allowNull: false,
     defaultValue: 'pending',
   }
 }, {
   tableName: 'tasks',
-  timestamps: true,     
-  underscored: true,      
+  timestamps: true,
+  underscored: true,
 });
 
 Task.getStatusLabel = function(status) {
-  const labels = {
-    pending: 'Pending',
-    'done down payment': 'Down Payment Received',
-    progress: 'In Progress',
-    'done development': 'Development Completed',
-    'done full payment': 'Full Payment Completed',
-    delivery: 'Delivered'
-  };
-  return labels[status] || status;
+  return statusLabels[status] || status;
 };
 
 module.exports = Task;
